@@ -56,6 +56,18 @@ public class UserController extends UserServiceGrpc.UserServiceImplBase {
 
     @Override
     public void getAllServerStream(EmptyReq request, StreamObserver<UserRes> responseObserver) {
-        super.getAllServerStream(request, responseObserver);
+        List<User> users = userRepository.findAll();
+
+        users.forEach(user -> {
+            UserRes userRes = UserRes.newBuilder()
+                    .setId(user.getId())
+                    .setName(user.getName())
+                    .setEmail(user.getEmail())
+                    .build();
+
+            responseObserver.onNext(userRes);
+        });
+
+        responseObserver.onCompleted();
     }
 }
